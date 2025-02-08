@@ -20,22 +20,18 @@ function displayResults(results) {
   const resultsDiv = document.getElementById('results');
   const checklistDiv = document.getElementById('checklist');
   
-  // Calculate warning level based on both API and local analysis
-  let warningLevel = 0;
-  if (results.sensationalLanguage) warningLevel += 2;
-  if (!results.hasCitations) warningLevel += 1;
-  if (!results.hasDate) warningLevel += 1;
-  if (results.apiResult === 'FAKE') warningLevel += 3;
+  let correctnessScore = 0;
+  if (results.sensationalLanguage === false) correctnessScore++;
+  if (results.hasCitations === true) correctnessScore++;
+  if (results.hasDate === true) correctnessScore++;
   
   let statusHtml = '';
-  if (results.apiResult === 'API_ERROR') {
-    statusHtml = '<div class="warning">⚠️ Could not connect to verification service</div>';
-  } else if (warningLevel >= 4) {
-    statusHtml = '<div class="warning">⚠️ High risk of fake news</div>';
-  } else if (warningLevel >= 2) {
-    statusHtml = '<div class="warning">⚠️ Some suspicious patterns detected</div>';
+  if (correctnessScore === 3) {
+    statusHtml = '<div class="safe">✓ This news is likely REAL</div>';
+  } else if (correctnessScore === 2) {
+    statusHtml = '<div class="warning">⚠️ This news MAY BE REAL OR FAKE</div>';
   } else {
-    statusHtml = '<div class="safe">✓ Content appears reliable</div>';
+    statusHtml = '<div class="warning">⚠️ This news is likely FAKE</div>';
   }
   
   resultsDiv.innerHTML = `
@@ -55,9 +51,6 @@ function displayResults(results) {
     </div>
     <div class="checklist-item">
       ${results.hasDate ? '✓' : '❌'} Publication date found
-    </div>
-    <div class="checklist-item">
-      ${results.apiResult === 'REAL' ? '✓' : '❌'} Trusted source verification
     </div>
   `;
 }
