@@ -25,13 +25,15 @@ function displayResults(results) {
   if (results.hasCitations === true) correctnessScore++;
   if (results.hasDate === true) correctnessScore++;
   
+  let confidencePercent = (correctnessScore / 3) * 100;
+  
   let statusHtml = '';
   if (correctnessScore === 3) {
-    statusHtml = '<div class="safe">✓ This news is likely REAL</div>';
+    statusHtml = `<div class="safe">✓ This news is likely REAL (Confidence: ${confidencePercent.toFixed(0)}%)</div>`;
   } else if (correctnessScore === 2) {
-    statusHtml = '<div class="warning">⚠️ This news MAY BE REAL OR FAKE</div>';
+    statusHtml = `<div class="warning">⚠️ This news MAY BE REAL OR FAKE (Confidence: ${confidencePercent.toFixed(0)}%)</div>`;
   } else {
-    statusHtml = '<div class="warning">⚠️ This news is likely FAKE</div>';
+    statusHtml = `<div class="warning">⚠️ This news is likely FAKE (Confidence: ${confidencePercent.toFixed(0)}%)</div>`;
   }
   
   resultsDiv.innerHTML = `
