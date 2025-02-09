@@ -1,7 +1,18 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 import logging
-
+from textblob import TextBlob
+def analyze_setiment(text):
+    """ Simple sentiment analysis using TextBlob. """
+    analysis = TextBlob(text)
+    return analysis.sentiment.polarity
+def analyze_news(title, author):
+    sentiment = analyze_setiment(title)
+    if sentiment <-0.5:
+        return "Fake"
+    elif sentiment > 0.5:
+        return "POTENIALLY FAKE"
+    return "UNKNOWN"
 app = Flask(__name__)
 CORS(app)  # Enable CORS for all routes
 
@@ -36,9 +47,13 @@ def analyze():
     data = request.json
     title = data.get('title')
     author = data.get('author')
+    publication_date = data.get('publicationDate')
 
-    result = analyze_news(title, author)
-    logger.info(f"Analyzed news: {title} by {author} - Result: {result}")
+    # Add publication date to the analysis logic
+    if publication_date and publication_date != 'Unknown':
+        result = "REAL"  # Assume articles with dates are more credible
+    else:
+        result = "POTENTIALLY FAKE"
 
     return jsonify(result=result)
 
